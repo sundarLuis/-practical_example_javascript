@@ -31,7 +31,7 @@ var app = new Vue({
         method: 'get',
         url: this.service.list,
       }
-      let response = await consumerApi(options)
+      let response = await this.consumerApi(options)
       if (response.status === 200) {
         this.tasks = response.data
         // let test = _.cloneDeep(response.data)
@@ -48,7 +48,7 @@ var app = new Vue({
           url: url,
           data: this.task
         }
-        let response = await consumerApi(options)
+        let response = await this.consumerApi(options)
         if (response.status === 200) {
           this.tasks = response.data
           this.listTasks()
@@ -62,7 +62,7 @@ var app = new Vue({
         method: 'delete',
         url: `${this.service.delete}${this.task.id}`,
       }
-      let response = await consumerApi(options)
+      let response = await this.consumerApi(options)
       if (response.status === 200) {
         this.listTasks()
       }
@@ -102,6 +102,31 @@ var app = new Vue({
       }
       errorMessage = ""
     },
+    async consumerApi(options) {
+      let result = {}
+      result.status = 400
+      result.error = []
+      try {
+        if (options) {
+          result.status = 200
+          const response = await axios(options);
+          result.data = response.data
+          this.errorConnectApi = false
+          return result
+        } else {
+          let error = { menssage: "error options", error: options }
+          result.error.push(error)
+          console.log("error", error);
+        }
+      } catch (error) {
+        error = error.toString()
+        let erroConnection = error.indexOf("Network Error")
+        if(erroConnection != -1) this.errorConnectApi = true    
+        let errorCatch = { menssage: "error catch", error }
+        result.error.push(errorCatch)  
+      }
+      return result
+  },
     /* functions Modals */
     modalAddEdit(form = false) {
       if (form) {
