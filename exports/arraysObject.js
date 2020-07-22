@@ -13,7 +13,7 @@ let arrayObjects = [
             id:2,
             name:"testName2",
             lastName:"lastName2",
-            status:true
+            status:true,
         }
     ]
 /**
